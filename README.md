@@ -79,3 +79,8 @@ public/            Mapbox GL front end (heatmap, grid, address search, click inf
 ```
 
 To include Madeira and/or the Azores, set `REGIONS=mainland,madeira,azores`.
+
+## License
+
+MIT, see [LICENSE](LICENSE). This covers the code only. Flight data you collect is subject to
+the terms of its source (see the data sources table above).

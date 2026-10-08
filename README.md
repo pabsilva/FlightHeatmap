@@ -20,6 +20,30 @@ No npm dependencies, just Node.js 20 or newer.
    ```
 4. Optional: rebuild the heatmap at any time with `npm run build`.
 
+### Running next to an older Node
+
+If the machine's system Node is older than 20 and another application depends on it, install
+a separate Node in its own folder and point `install.sh` at it. Nothing on the `PATH` changes,
+so the other application keeps using the system Node.
+
+```bash
+uname -m           # aarch64 -> arm64, armv7l -> armv7l, armv6l -> see below
+ldd --version      # Node 20+ needs glibc 2.28 or newer (Raspberry Pi OS Buster or later)
+
+V=v22.20.0 ARCH=arm64    # pick the current v22 release and your architecture
+curl -fsSL https://nodejs.org/dist/$V/node-$V-linux-$ARCH.tar.xz | sudo tar -xJ -C /opt
+sudo ln -sfn /opt/node-$V-linux-$ARCH /opt/node22
+
+/opt/node22/bin/node -v
+NODE_BIN=/opt/node22/bin/node ./install.sh
+```
+
+The systemd services store that absolute path, so they always use it. For manual commands, use
+the same binary, e.g. `/opt/node22/bin/node src/build.js`.
+
+For an `armv6l` Pi (Pi 1 / Zero / Zero W), use the
+[unofficial builds](https://unofficial-builds.nodejs.org/download/release/) instead of nodejs.org.
+
 ## Data sources (`SOURCE` in `.env`)
 
 Only positions are used. Callsigns, routes and so on are thrown away.

@@ -29,12 +29,16 @@ fi
 
 command -v systemctl >/dev/null || die "systemd not found."
 
-NODE_BIN="$(command -v node || true)"
+# NODE_BIN can point at a separate Node install, e.g. NODE_BIN=/opt/node22/bin/node ./install.sh
+NODE_BIN="${NODE_BIN:-$(command -v node || true)}"
 [ -n "$NODE_BIN" ] || die "Node.js not found. Install Node 20+ first, e.g.:
   curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
   sudo apt install -y nodejs"
+[ -x "$NODE_BIN" ] || die "NODE_BIN=$NODE_BIN is not an executable."
 NODE_MAJOR="$("$NODE_BIN" -p 'process.versions.node.split(".")[0]')"
-[ "$NODE_MAJOR" -ge 20 ] || die "Node $NODE_MAJOR found at $NODE_BIN, but 20 or newer is required."
+[ "$NODE_MAJOR" -ge 20 ] || die "Node $NODE_MAJOR found at $NODE_BIN, but 20 or newer is required.
+To keep the system Node, install a separate one and run: NODE_BIN=/path/to/node ./install.sh
+(see \"Running next to an older Node\" in the README)."
 
 if [ ! -f "$APP_DIR/.env" ]; then
   if [ -f "$APP_DIR/.env.example" ]; then

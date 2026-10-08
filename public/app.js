@@ -55,7 +55,8 @@ const geolocate = new mapboxgl.GeolocateControl({
 map.addControl(geolocate, 'top-right');
 map.addControl(new mapboxgl.ScaleControl({ unit: 'metric' }), 'bottom-right');
 const geocoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl, countries: 'pt', marker: false, placeholder: 'Search an address…' });
-map.addControl(geocoder, 'top-right');
+// Placed in its own box (see #search in style.css) so it sits left of the map buttons instead of below them.
+geocoder.addTo('#search');
 const marker = new mapboxgl.Marker({ color: '#1d232b' });
 
 // ---------- data ----------

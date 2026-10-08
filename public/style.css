@@ -26,9 +26,14 @@ select { padding: 4px 6px; border: 1px solid #c8cfd8; border-radius: 6px; backgr
 .info td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; color: #fff; font-weight: 600; font-size: 12px; margin-bottom: 6px; }
 
-.mapboxgl-ctrl-geocoder { min-width: 280px; }
+/* Top edge, left of the map buttons (10px margin + 29px button + 10px gap). */
+#search { position: absolute; top: 10px; right: 49px; }
+/* Shrinks on narrow desktop windows so it doesn't run under the panel (12 + 320 + 12px gap). */
+#search .mapboxgl-ctrl-geocoder { width: min(320px, calc(100vw - 49px - 356px)); max-width: none; min-width: 0; }
 
 @media (max-width: 640px) {
   #panel { top: auto; bottom: 8px; left: 8px; right: 8px; width: auto; max-height: 45%; }
-  .mapboxgl-ctrl-geocoder { min-width: 0; }
+  /* Panel moves to the bottom, so the search can use the full top row. */
+  #search { left: 8px; }
+  #search .mapboxgl-ctrl-geocoder { width: 100%; }
 }

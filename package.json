@@ -1,0 +1,14 @@
+{
+  "name": "flight-heatmap-pt",
+  "version": "1.0.0",
+  "description": "Air-traffic noise heatmap for Portugal (Flightradar24 + Mapbox)",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/server.js",
+    "collect": "node src/collector.js",
+    "build": "node src/build.js",
+    "backfill": "node src/backfill.js"
+  }
+}

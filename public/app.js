@@ -24,6 +24,12 @@ const map = new mapboxgl.Map({
   zoom: 6.3,
 });
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+// One-shot "my location" button. Browsers only allow it over HTTPS or on localhost.
+const geolocate = new mapboxgl.GeolocateControl({
+  positionOptions: { enableHighAccuracy: true },
+  fitBoundsOptions: { maxZoom: 13 },
+});
+map.addControl(geolocate, 'top-right');
 map.addControl(new mapboxgl.ScaleControl({ unit: 'metric' }), 'bottom-right');
 const geocoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl, countries: 'pt', marker: false, placeholder: 'Search an address…' });
 map.addControl(geocoder, 'top-right');
@@ -201,6 +207,15 @@ geocoder.on('result', (e) => {
   const [lng, lat] = e.result.center;
   map.flyTo({ center: [lng, lat], zoom: 13 });
   showInfo({ lng, lat });
+});
+geolocate.on('geolocate', (e) => showInfo({ lng: e.coords.longitude, lat: e.coords.latitude }));
+geolocate.on('error', (e) => {
+  $('info').classList.add('muted');
+  $('info').textContent = !window.isSecureContext
+    ? 'Your location only works when the map is opened over HTTPS (or on localhost).'
+    : e.code === 1
+      ? 'Location access was denied. Allow it in your browser settings and try again.'
+      : 'Could not get your location. Try again, or search an address instead.';
 });
 
 $('metric').onchange = (e) => { state.metric = e.target.value; applyStyle(); updateLegend(); };

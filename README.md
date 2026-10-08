@@ -76,7 +76,9 @@ Each ~1 km cell gets these values, averaged per day of collected data:
 
 Positions about 20 s apart are joined into straight segments, so the gaps between snapshots get filled in.
 Colours use a log scale. A cell with no recorded traffic is transparent.
-Click the map or search an address to see the numbers for that spot.
+Click the map, search an address, or use the location button to see the numbers for that spot.
+Browsers only allow the location button over HTTPS or on `localhost`, so it won't work when you
+open the map at a plain `http://<pi-ip>:3000` address (a Cloudflare Tunnel URL is fine).
 
 ## Caveats
 

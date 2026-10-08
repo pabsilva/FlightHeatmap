@@ -9,7 +9,30 @@ const COLS = { all: 2, b3000: 3, b1500: 4, noise: 5 };
 const RAMP = ['#1a9850', '#91cf60', '#fee08b', '#fc8d59', '#d73027'];
 const $ = (id) => document.getElementById(id);
 
-const state = { metric: 'noise', view: 'heatmap', opacity: 0.7, intensity: 0.3, data: null, scales: {}, lookup: new Map() };
+// Panel options are remembered in localStorage. It can be unavailable (private mode, blocked storage),
+// so failures are ignored and the defaults from index.html are used.
+const PREFS_KEY = 'flightmap.prefs';
+const PREF_IDS = ['metric', 'view', 'style', 'opacity', 'intensity'];
+try {
+  const prefs = JSON.parse(localStorage.getItem(PREFS_KEY)) || {};
+  for (const id of PREF_IDS) {
+    const el = $(id), v = prefs[id];
+    if (typeof v !== 'string') continue;
+    // Skip values that no longer exist, e.g. a removed option.
+    if (el.tagName === 'SELECT' && ![...el.options].some((o) => o.value === v)) continue;
+    el.value = v;
+  }
+} catch { /* use defaults */ }
+function savePrefs() {
+  try {
+    localStorage.setItem(PREFS_KEY, JSON.stringify(Object.fromEntries(PREF_IDS.map((id) => [id, $(id).value]))));
+  } catch { /* not persisted */ }
+}
+
+const state = {
+  metric: $('metric').value, view: $('view').value, opacity: +$('opacity').value, intensity: +$('intensity').value,
+  data: null, scales: {}, lookup: new Map(),
+};
 
 if (!window.APP_CONFIG.mapboxToken || window.APP_CONFIG.mapboxToken.startsWith('pk.your')) {
   $('summary').textContent = 'Set MAPBOX_TOKEN in .env and restart the server.';
@@ -223,5 +246,6 @@ $('view').onchange = (e) => { state.view = e.target.value; applyStyle(); };
 $('opacity').oninput = (e) => { state.opacity = +e.target.value; applyStyle(); };
 $('intensity').oninput = (e) => { state.intensity = +e.target.value; applyStyle(); };
 $('style').onchange = (e) => map.setStyle(e.target.value);
+for (const id of PREF_IDS) $(id).addEventListener('change', savePrefs);
 
 map.once('load', loadData);
